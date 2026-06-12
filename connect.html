@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>YUFARRI CONNECT</title>
+
+<style>
+body{
+  background:#111;
+  color:white;
+  font-family:Arial;
+  text-align:center;
+}
+
+input{
+  width:250px;
+  height:40px;
+  font-size:16px;
+  margin-top:20px;
+}
+
+button{
+  width:150px;
+  height:50px;
+  margin-top:20px;
+  font-size:16px;
+}
+
+.status{
+  margin-top:20px;
+  color:red;
+}
+
+.connected{
+  color:#00ff6a;
+}
+</style>
+</head>
+
+<body>
+
+<h1>YUFARRI CONNECT</h1>
+
+<p>ESP32 IP adresini gir:</p>
+
+<input id="ip" placeholder="192.168.4.1">
+
+<br>
+
+<button onclick="connect()">BAĞLAN</button>
+
+<p id="status" class="status">BAĞLI DEĞİL</p>
+
+<script>
+
+function connect(){
+  let ip = document.getElementById("ip").value;
+
+  if(!ip){
+    alert("IP gir!");
+    return;
+  }
+
+  // localStorage'a kaydet
+  localStorage.setItem("yufarri_ip", ip);
+
+  document.getElementById("status").innerText = "BAĞLANDI (SIM)";
+  document.getElementById("status").className = "connected";
+
+  alert("Bağlandı: " + ip);
+  
+  // kontrol sayfasına yönlendir
+  setTimeout(()=>{
+    window.location.href = "index.html";
+  }, 1000);
+}
+
+</script>
+
+</body>
+</html>
