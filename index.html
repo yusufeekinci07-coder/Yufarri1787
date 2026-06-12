@@ -79,6 +79,22 @@ button {
 <p id="out">gas:0 | steer:0</p>
 
 <script>
+  function getIP(){
+  return localStorage.getItem("yufarri_ip");
+}
+  function send(cmd){
+  if(!connected){
+    alert("Önce bağlan!");
+    return;
+  }
+
+  let ip = getIP();
+
+  console.log("Gönderiliyor:", cmd, "->", ip);
+
+  // SONRA ESP32 BURAYA BAĞLANACAK
+  // fetch(`http://${ip}/${cmd}`);
+}
 
 let connected = false;
 let gas = 0;
