@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>YUFARRI FC</title>
+
+<style>
+body {
+  margin:0;
+  background:#0f0f0f;
+  color:white;
+  font-family:Arial;
+  text-align:center;
+}
+
+/* TOP BAR */
+.top {
+  display:flex;
+  justify-content:space-between;
+  padding:10px;
+  background:#1c1c1c;
+}
+
+.status {
+  color:red;
+}
+
+.connected {
+  color:#00ff6a;
+}
+
+/* JOYSTICK AREA */
+#pad {
+  width:200px;
+  height:200px;
+  background:#222;
+  border-radius:50%;
+  margin:40px auto;
+  position:relative;
+}
+
+#stick {
+  width:60px;
+  height:60px;
+  background:#ff2b2b;
+  border-radius:50%;
+  position:absolute;
+  top:70px;
+  left:70px;
+}
+
+/* BUTTON */
+button {
+  width:120px;
+  height:50px;
+  margin:10px;
+  font-size:16px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="top">
+  <div>YUFARRI FC</div>
+  <div id="conn" class="status">NOT CONNECTED</div>
+</div>
+
+<h3>JOYSTICK CONTROL</h3>
+
+<div id="pad">
+  <div id="stick"></div>
+</div>
+
+<button onclick="connect()">BAĞLAN</button>
+<button onclick="brake()">FREN</button>
+
+<p id="out">gas:0 | steer:0</p>
+
+<script>
+
+let connected = false;
+let gas = 0;
+let steer = 0;
+
+const pad = document.getElementById("pad");
+const stick = document.getElementById("stick");
+const out = document.getElementById("out");
+
+function connect(){
+  connected = true;
+  document.getElementById("conn").innerText = "CONNECTED";
+  document.getElementById("conn").className = "connected";
+}
+
+// JOYSTICK CONTROL
+let active = false;
+
+pad.addEventListener("mousedown", start);
+pad.addEventListener("touchstart", start);
+
+pad.addEventListener("mouseup", end);
+pad.addEventListener("touchend", end);
+
+pad.addEventListener("mousemove", move);
+pad.addEventListener("touchmove", move);
+
+function start(){ active = true; }
+function end(){ active = false; reset(); }
+
+function move(e){
+  if(!active || !connected) return;
+
+  let rect = pad.getBoundingClientRect();
+
+  let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left - 100;
+  let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top - 100;
+
+  steer = Math.max(-100, Math.min(100, x));
+  gas = Math.max(0, Math.min(100, -y));
+
+  stick.style.left = (100 + x - 30) + "px";
+  stick.style.top = (100 + y - 30) + "px";
+
+  send();
+}
+
+function reset(){
+  gas = 0;
+  steer = 0;
+  stick.style.left = "70px";
+  stick.style.top = "70px";
+  send();
+}
+
+// BRAKE
+function brake(){
+  gas = 0;
+  send();
+}
+
+// SEND COMMAND
+function send(){
+  if(!connected) return;
+
+  out.innerText = `gas:${gas.toFixed(0)} | steer:${steer.toFixed(0)}`;
+
+  console.log({
+    gas: gas,
+    steer: steer
+  });
+
+  // SONRA ESP32 BURAYA BAĞLANACAK
+  // fetch("http://esp32-ip/control?gas="+gas+"&steer="+steer);
+}
+
+</script>
+
+</body>
+</html>
